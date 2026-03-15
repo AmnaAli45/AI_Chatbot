@@ -58,7 +58,16 @@ if 'chat_threads' not in st.session_state:
 
 
 ###                Creating a dumb assistant that echoes the user's message              ### 
-config = {'configurable':{'thread_id': st.session_state['thread_id'] }}
+# config = {'configurable':{'thread_id': st.session_state['thread_id'] }}
+
+## agr hrr thread id k lye alag se observability add krny hai to ye config add krna ho ga
+
+CONFIG = {'configurable':{'thread_id': st.session_state['thread_id'] },
+          "meta data": {
+              'thread_id': st.session_state['thread_id'] 
+          },
+          "run_name": "chat_turn"
+          } 
  
 user_input = st.chat_input("Type your message here...")
 
@@ -77,7 +86,7 @@ user_input = st.chat_input("Type your message here...")
 
 st.sidebar.title("LangGraph Chatbot")
 
-if st.sidebar.button("New Conversation"):
+if st.sidebar.button("New Conversation"): # this function will create something new 
     reset_chat()
 
 st.sidebar.header("My Conversations")
@@ -124,10 +133,17 @@ if user_input:
     # st.session_state["message_history"].append({"role": "assistant", "content": ai_message})
     with st.chat_message("assistant"):
         #st.text(ai_message)
+        CONFIG = {'configurable':{'thread_id': st.session_state['thread_id'] },
+          "meta data": {
+              'thread_id': st.session_state['thread_id'] 
+          },
+          "run_name": "chat_turn"
+          } 
+ 
         ai_message = st.write_stream(
             message_chunk.content for message_chunk,metadata in workflow.stream(
                 {'messages': [HumanMessage(content=user_input)]},
-                config = config,
+                config = CONFIG,
                 stream_mode = 'messages'
             )
         )
